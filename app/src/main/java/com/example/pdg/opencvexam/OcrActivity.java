@@ -34,11 +34,19 @@ public class OcrActivity extends Activity {
     @BindView(R.id.image)
     ImageView imageView;
 
+    static {
+        System.loadLibrary("MyLib");
+    }
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ocr);
         ButterKnife.bind(this);
+
+        System.out.println(NativeClass.getStringFromNative());
 
         ThisApplication thisApplication = (ThisApplication) getApplicationContext();
 

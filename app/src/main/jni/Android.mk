@@ -8,9 +8,8 @@ OPENCV_INSTALL_MODULES:=on
 OPENCV_LIB_TYPE:=SHARED
 include ${OPENCVROOT}\sdk\native\jni\OpenCV.mk
 
-
-LOCAL_MODULE    := native-lib
-LOCAL_SRC_FILES := main.cpp
+LOCAL_MODULE    := MyLib
+LOCAL_SRC_FILES := com_example_pdg_opencvexam_NativeClass.cpp
 LOCAL_LDLIBS += -llog
 
 include $(BUILD_SHARED_LIBRARY)
