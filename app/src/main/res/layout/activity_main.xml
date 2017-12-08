@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.pdg.opencvexam.MainActivity">
+
+    <com.example.pdg.opencvexam.CameraView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/cameraView"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:id="@+id/result"
+        android:textStyle="bold"
+        android:textColor="#FF00FF"
+        android:background="#00FF00"
+        android:textColorHighlight="#000000"
+        android:textSize="32sp"/>
+
+</FrameLayout>
