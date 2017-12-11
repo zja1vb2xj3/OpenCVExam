@@ -35,6 +35,7 @@
         <activity
             android:name=".MainActivity"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:largeHeap="true"
             android:screenOrientation="landscape">
 
             <intent-filter>

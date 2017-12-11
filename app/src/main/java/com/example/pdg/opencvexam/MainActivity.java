@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.Html;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.widget.TextView;
@@ -16,18 +17,23 @@ import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
+import org.opencv.calib3d.Calib3d;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.KeyPoint;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfKeyPoint;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.features2d.FeatureDetector;
+import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
-
+import org.opencv.core.*;
+import org.opencv.imgcodecs.Imgcodecs;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,11 +89,13 @@ public class MainActivity extends Activity {
 
     CameraView.OnFocus onFocus = new CameraView.OnFocus() {
         @Override
-        public void on(Mat rgbaMat) {
+        public void on(Mat input) {
 
-//            Mat result = NativeClass.getArea(rgbaMat);
+//            Mat result = NativeClass.exampleMain(rgbaMat);
+//
+//            Mat result = detectCardExample(input);
 
-            Bitmap bitmap = matToBitmap(rgbaMat);
+            Bitmap bitmap = matToBitmap(input);
 
             ThisApplication thisApplication = (ThisApplication) getApplicationContext();
             thisApplication.setBitmap(bitmap);
@@ -99,6 +107,79 @@ public class MainActivity extends Activity {
         }
     };
 
+    private Mat detectCardExample(Mat mat) {
+        Mat gray = new Mat(mat.size(), CvType.CV_8UC1);
+        Imgproc.cvtColor(mat, gray, Imgproc.COLOR_RGB2GRAY);
+
+        Mat blurred = new Mat(gray.size(), gray.type());
+        Mat binary4c = new Mat(gray.size(), gray.type());
+
+        Imgproc.GaussianBlur(gray, blurred, new Size(5, 5), 0, 0);// width height 5초과시 앱 종료
+
+        float th = 128;
+        float thMax = 255;
+
+        Imgproc.threshold(blurred, binary4c, th, thMax, Imgproc.THRESH_BINARY);
+
+        int dpi = 300;
+
+
+        return binary4c;
+    }
+
+    private Bitmap rotateBitmap(Bitmap bitmap, int degree) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(degree);
+
+        Bitmap rotateBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+
+        return rotateBitmap;
+    }
+
+
+    private Bitmap matToBitmap(Mat mat) {
+        Bitmap bitmap = Bitmap.createBitmap(mat.cols(), mat.rows(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(mat, bitmap);
+
+        return bitmap;
+    }
+
+    private Mat bitmapToMat(Bitmap bitmap) {
+        Mat mat = new Mat();
+        Utils.bitmapToMat(bitmap, mat);
+
+        return mat;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (cameraView != null)
+            cameraView.disableView();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (!OpenCVLoader.initDebug()) {
+            Log.i(CLASSNAME, "onResume :: Internal OpenCV library not found.");
+            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_2_0, this, loaderCallback);
+        } else {
+            Log.i(CLASSNAME, "onResume :: OpenCV library found inside package. Using it!");
+            loaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+        }
+    }
+
+    public void onDestroy() {
+        super.onDestroy();
+
+        if (cameraView != null)
+            cameraView.disableView();
+    }
+
+
+    //region detectText
 //    private Mat detectText(Mat rgbaMat){
 //
 //        Mat originMat = rgbaMat;
@@ -170,58 +251,7 @@ public class MainActivity extends Activity {
 //        return originMat;
 //    }
 
-    private Bitmap rotateBitmap(Bitmap bitmap, int degree) {
-        Matrix matrix = new Matrix();
-        matrix.postRotate(degree);
-
-        Bitmap rotateBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-
-        return rotateBitmap;
-    }
-
-
-    private Bitmap matToBitmap(Mat mat) {
-        Bitmap bitmap = Bitmap.createBitmap(mat.cols(), mat.rows(), Bitmap.Config.ARGB_8888);
-        Utils.matToBitmap(mat, bitmap);
-
-        return bitmap;
-    }
-
-    private Mat bitmapToMat(Bitmap bitmap) {
-        Mat mat = new Mat();
-        Utils.bitmapToMat(bitmap, mat);
-
-        return mat;
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (cameraView != null)
-            cameraView.disableView();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        if (!OpenCVLoader.initDebug()) {
-            Log.i(CLASSNAME, "onResume :: Internal OpenCV library not found.");
-            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_2_0, this, loaderCallback);
-        } else {
-            Log.i(CLASSNAME, "onResume :: OpenCV library found inside package. Using it!");
-            loaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
-        }
-    }
-
-    public void onDestroy() {
-        super.onDestroy();
-
-        if (cameraView != null)
-            cameraView.disableView();
-    }
-
-
+    //endregion
 //region
 //    private void prepareTessData() {
 //        try {

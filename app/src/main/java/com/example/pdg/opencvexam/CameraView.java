@@ -18,6 +18,7 @@ import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
@@ -58,14 +59,14 @@ public class CameraView extends JavaCameraView implements JavaCameraView.CvCamer
 
         final Mat matResult = new Mat(rgbaMat.rows(), rgbaMat.cols(), rgbaMat.type());
 
-        NativeClass.colorToGray(rgbaMat.getNativeObjAddr(), matResult.getNativeObjAddr());
+        NativeClass.getArea(rgbaMat.getNativeObjAddr(), matResult.getNativeObjAddr());
 
         mCamera.autoFocus(new Camera.AutoFocusCallback() {
             @Override
             public void onAutoFocus(boolean success, Camera camera) {
-                System.out.println("onAutoFocus");
+                System.out.println("onAutoFocus success" + success);
                 if (success == true) {
-//                    onFocus.on(matResult);
+//                    onFocus.on(rgbaMat);
                 } else {
 
                 }
@@ -84,13 +85,14 @@ public class CameraView extends JavaCameraView implements JavaCameraView.CvCamer
     private void cameraInit() {
         Camera.Parameters parameters = mCamera.getParameters();
         parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
-
+        parameters.setPreviewFpsRange(1500, 1500);
+        parameters.setSceneMode(Camera.Parameters.WHITE_BALANCE_AUTO);
         mCamera.setParameters(parameters);
         mCamera.startPreview();
     }
 
     interface OnFocus {
-        void on(Mat rgbaMat);
+        void on(Mat input);
     }
 
     private OnFocus onFocus;

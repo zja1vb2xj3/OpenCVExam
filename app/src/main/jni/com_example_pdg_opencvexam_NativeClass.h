@@ -18,6 +18,9 @@ Java_com_example_pdg_opencvexam_NativeClass_colorToGray(JNIEnv *, jobject, jlong
 JNIEXPORT void JNICALL
 Java_com_example_pdg_opencvexam_NativeClass_getArea(JNIEnv *, jobject, jlong, jlong);
 
+JNIEXPORT void JNICALL
+Java_com_example_pdg_opencvexam_NativeClass_exampleMain(JNIEnv *, jobject, jlong, jlong);
+
 #ifdef __cplusplus
 }
 #endif
