@@ -55,27 +55,24 @@ public class CameraView extends JavaCameraView implements JavaCameraView.CvCamer
 //        Log.i(CLASSNAME, "onCameraFrame");
 
         final Mat rgbaMat = inputFrame.rgba();
-        final Mat grayMat = inputFrame.gray();
 
-        int threshold = 100;
+        final Mat matResult = new Mat(rgbaMat.rows(), rgbaMat.cols(), rgbaMat.type());
 
-
+        NativeClass.colorToGray(rgbaMat.getNativeObjAddr(), matResult.getNativeObjAddr());
 
         mCamera.autoFocus(new Camera.AutoFocusCallback() {
             @Override
             public void onAutoFocus(boolean success, Camera camera) {
                 System.out.println("onAutoFocus");
                 if (success == true) {
-//                    onFocus.on(rgbaMat);
-
-
+//                    onFocus.on(matResult);
                 } else {
 
                 }
             }
         });
 
-        return rgbaMat;
+        return matResult;
     }
 
 

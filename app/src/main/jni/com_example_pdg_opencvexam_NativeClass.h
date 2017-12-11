@@ -9,10 +9,19 @@
 extern "C" {
 #endif //OPENCVEXAM_COM_EXAMPLE_PDG_OPENCVEXAM_NATIVECLASS_H
 
-JNIEXPORT jstring JNICALL Java_com_example_pdg_opencvexam_NativeClass_getStringFromNative
-        (JNIEnv *, jobject);
+JNIEXPORT jstring JNICALL
+Java_com_example_pdg_opencvexam_NativeClass_getStringFromNative(JNIEnv *, jobject);
+
+JNIEXPORT void JNICALL
+Java_com_example_pdg_opencvexam_NativeClass_colorToGray(JNIEnv *, jobject, jlong, jlong);
+
+JNIEXPORT void JNICALL
+Java_com_example_pdg_opencvexam_NativeClass_getArea(JNIEnv *, jobject, jlong, jlong);
 
 #ifdef __cplusplus
 }
 #endif
 #endif
+
+
+

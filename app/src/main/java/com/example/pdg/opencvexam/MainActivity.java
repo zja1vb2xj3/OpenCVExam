@@ -69,8 +69,6 @@ public class MainActivity extends Activity {
     };
     //endregion
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,10 +85,9 @@ public class MainActivity extends Activity {
         @Override
         public void on(Mat rgbaMat) {
 
-            Bitmap bitmap = matToBitmap(rgbaMat);
+//            Mat result = NativeClass.getArea(rgbaMat);
 
-//            Log.i(CLASSNAME, String.valueOf(bitmap.getWidth()));
-//            Log.i(CLASSNAME, String.valueOf(bitmap.getHeight()));
+            Bitmap bitmap = matToBitmap(rgbaMat);
 
             ThisApplication thisApplication = (ThisApplication) getApplicationContext();
             thisApplication.setBitmap(bitmap);
@@ -183,14 +180,14 @@ public class MainActivity extends Activity {
     }
 
 
-    private Bitmap matToBitmap(Mat mat){
+    private Bitmap matToBitmap(Mat mat) {
         Bitmap bitmap = Bitmap.createBitmap(mat.cols(), mat.rows(), Bitmap.Config.ARGB_8888);
         Utils.matToBitmap(mat, bitmap);
 
         return bitmap;
     }
 
-    private Mat bitmapToMat(Bitmap bitmap){
+    private Mat bitmapToMat(Bitmap bitmap) {
         Mat mat = new Mat();
         Utils.bitmapToMat(bitmap, mat);
 
