@@ -36,7 +36,6 @@ public class MainActivity extends Activity {
     @BindView(R.id.result)
     TextView result;
 
-    private TessCore tessCore;
 
     static {
         System.loadLibrary("opencv_java3");
@@ -68,7 +67,6 @@ public class MainActivity extends Activity {
         cameraView.setOnFocus(onFocus);
         openCVCallBack.onManagerConnected(LoaderCallbackInterface.SUCCESS);
 
-        tessCore = new TessCore(this);
     }
 
     CameraView.OnFocus onFocus = new CameraView.OnFocus() {
@@ -78,15 +76,15 @@ public class MainActivity extends Activity {
             ThisApplication thisApplication = (ThisApplication) getApplicationContext();
             ArrayList<Bitmap> bitmapArrayList = thisApplication.getBitmapArrayList();
 
-            Bitmap stateBitmap = matToBitmap(resultState);
-            thisApplication.setBitmap(stateBitmap);
-
             for (int i = 0; i < resultMat.length; i++) {
                 if (resultMat[i] != null) {
                     Bitmap resultBitmap = matToBitmap(resultMat[i]);
                     bitmapArrayList.add(resultBitmap);
                 }
             }
+
+            Bitmap stateBitmap = matToBitmap(resultState);
+            thisApplication.setBitmap(stateBitmap);
 
             thisApplication.setBitmapArrayList(bitmapArrayList);
 

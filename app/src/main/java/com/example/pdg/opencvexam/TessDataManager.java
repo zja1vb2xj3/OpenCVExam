@@ -10,12 +10,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-
 /**
- * Created by pdg on 2017-12-13.
+ * Created by pdg on 2017-12-15.
  */
 
 public class TessDataManager {
+
     static final String TAG = "DBG_" + TessDataManager.class.getName();
 
     private static final String tessdir = "tesseract";
@@ -106,4 +106,3 @@ public class TessDataManager {
     }
 
 }
-

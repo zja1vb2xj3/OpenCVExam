@@ -134,33 +134,37 @@ Java_com_example_pdg_opencvexam_NativeClass_exampleMain(JNIEnv *env, jobject ins
         Scalar color = Scalar(255, 0, 0);
         Rect rect = boundingRect(Mat(contours[i]));
 
-        if (rect.width > 0 &&rect.height > 49 && rect.height < 1000) {
+        if (rect.width > 0 && rect.height > 49 && rect.height < 1000) {
 
             findCount++;
             rectangle(inputMat, rect, color);
 
+            //rect영역의 mat를 roi에 대입
             Mat roi = inputMat(rect);
-
+            //vector에 할당
             mats.push_back(roi);
 
         }
     }
 
-    jclass matClass = env -> FindClass("org/opencv/core/Mat");
-    jmethodID jMatCons = env->GetMethodID(matClass,"<init>","()V");
+    //ndk jobjectArray 반환 초기화
+    jclass matClass = env->FindClass("org/opencv/core/Mat");
+    jmethodID jMatCons = env->GetMethodID(matClass, "<init>", "()V");
     jmethodID getPtrMethod = env->GetMethodID(matClass, "getNativeObjAddr", "()J");
 
-    if(env -> ExceptionOccurred())
+    if (env->ExceptionOccurred())
         return NULL;
 
-    jobjectArray matArray = env -> NewObjectArray((jsize)mats.size(), matClass, 0);
+    jobjectArray matArray = env->NewObjectArray((jsize) mats.size(), matClass, 0);
+    //
 
-    for(int i=0; i<(int)mats.size(); i++){
-        jobject jMat = env -> NewObject(matClass, jMatCons);
-        Mat & native_image= *(Mat*)env->CallLongMethod(jMat, getPtrMethod);
-        native_image=mats[i];
+    //jobject로 mats 데이터를 받아서 jobjectArray에 대입
+    for (int i = 0; i < (int) mats.size(); i++) {
+        jobject jMat = env->NewObject(matClass, jMatCons);
+        Mat &native_image = *(Mat *) env->CallLongMethod(jMat, getPtrMethod);
+        native_image = mats[i];
 
-        env ->SetObjectArrayElement(matArray, i, jMat);
+        env->SetObjectArrayElement(matArray, i, jMat);
 //        matCount = i;
 //        matCols = mats[i].cols;
 //        matRows = mats[i].rows;
@@ -170,7 +174,7 @@ Java_com_example_pdg_opencvexam_NativeClass_exampleMain(JNIEnv *env, jobject ins
 
     }
 
-    resultMat = mats[1];
+    resultMat = inputMat;
 
     return matArray;
 }

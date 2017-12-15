@@ -10,14 +10,15 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by pdg on 2017-12-13.
+ * Created by pdg on 2017-12-15.
  */
 
 public class TessCore {
+
     static final String TAG = "DBG_" + TessCore.class.getName();
 
     private Context mCtx;
-
+    private final String lang = "kor";
     public TessCore(Context context) {
         this.mCtx = context;
     }
@@ -29,12 +30,12 @@ public class TessCore {
         String path = TessDataManager.getTesseractFolder();     //path에는 tesseract라는 이름의 디렉토리의 경로가 저장된다.
         Log.d(TAG, "Tess folder: " + path);
         tessBaseAPI.setDebug(true);
-        tessBaseAPI.init(path, "kor");//언어설정
+        tessBaseAPI.init(path, lang);//언어설정
         // 추천 글자들[0-9]abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
 
-//        tessBaseAPI.setVariable(TessBaseAPI.VAR_CHAR_WHITELIST, "a-zA-Z");
+        tessBaseAPI.setVariable(TessBaseAPI.VAR_CHAR_WHITELIST, "a-zA-Z");
         // 비추천 글자들
-        tessBaseAPI.setVariable(TessBaseAPI.VAR_CHAR_BLACKLIST, "!@#$%^&*()_+=-[]}{;:'\"\\|~`,./<>?「、×′");
+        tessBaseAPI.setVariable(TessBaseAPI.VAR_CHAR_BLACKLIST, "!@#$%^&*()_+=-[]}{;:'\"\\|~`,./<>?「、×′」뻬〉〈l뛴『』”뛴〔〕쐐【《》±");
 
         tessBaseAPI.setPageSegMode(TessBaseAPI.OEM_TESSERACT_CUBE_COMBINED);
         Log.d(TAG, "Ended initialization of TessEngine");
