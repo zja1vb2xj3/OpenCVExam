@@ -3,6 +3,7 @@ package com.example.pdg.opencvexam;
 import org.opencv.core.Mat;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Created by pdg on 2017-12-08.
@@ -10,19 +11,14 @@ import java.io.IOException;
 
 public class NativeClass {
 
-    static{
-        try {
-            System.loadLibrary("MyLib");
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
+    static {
+        System.loadLibrary("MyLib");
+
     }
 
     public native static String getStringFromNative();
+
     public native static void colorToGray(long matAddrInput, long matAddrResult);
 
-    public native static void getArea(long matAddrInput, long matAddrResult);
-
-    public native static void exampleMain(long matAddrInput, long matAddrResult);
+    public native static Mat[] exampleMain(long matAddrInput, long matAddrResult);
 }

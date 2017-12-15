@@ -2,27 +2,28 @@ package com.example.pdg.opencvexam;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.hardware.Camera;
+import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.View;
 
 import org.opencv.android.JavaCameraView;
-import org.opencv.android.Utils;
-import org.opencv.core.Core;
 import org.opencv.core.CvType;
+import org.opencv.core.KeyPoint;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfInt;
+import org.opencv.core.MatOfKeyPoint;
 import org.opencv.core.MatOfPoint;
-
-import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
-import org.opencv.core.Size;
+import org.opencv.features2d.FeatureDetector;
 import org.opencv.imgproc.Imgproc;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 
 /**
  * Created by pdg on 2017-12-06.
@@ -33,15 +34,45 @@ public class CameraView extends JavaCameraView implements JavaCameraView.CvCamer
     private Context context;
     private Resources resources;
     private Paint paint;
+    private Mat rgbaMat;
+    private Mat resultMat;
+    private Handler handler;
 
     public CameraView(Context context, AttributeSet attrs) {
         super(context, attrs);
-
         this.context = context;
         this.resources = context.getResources();
+        handler = new Handler();
         this.setCvCameraViewListener(this);
-
+        this.setOnClickListener(onClickListener);
     }
+
+    JavaCameraView.OnClickListener onClickListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (mCamera.getParameters() != null) {
+                Log.i(CLASSNAME, "onClick");
+
+                turnOnFlash();
+
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        resultMat = new Mat(rgbaMat.size(), CvType.CV_8UC1);
+
+                        Mat[] mats = NativeClass.exampleMain(rgbaMat.getNativeObjAddr(), resultMat.getNativeObjAddr());
+
+                        turnOffFlash();
+
+                        if (onFocus != null && resultMat.rows() != 0) {
+                            onFocus.onInputMat(mats, resultMat);
+                        }
+                    }
+                }, 1000);
+            }
+        }
+    };
 
     //region print frameSize
 //    int frameWidth = rgbaMat.rows();
@@ -52,28 +83,26 @@ public class CameraView extends JavaCameraView implements JavaCameraView.CvCamer
 
 
     @Override
-    public Mat onCameraFrame(final CvCameraViewFrame inputFrame) {
+    public Mat onCameraFrame(final CvCameraViewFrame inputFrame) throws IOException {
 //        Log.i(CLASSNAME, "onCameraFrame");
 
-        final Mat rgbaMat = inputFrame.rgba();
-
-        final Mat matResult = new Mat(rgbaMat.rows(), rgbaMat.cols(), rgbaMat.type());
-
-        NativeClass.getArea(rgbaMat.getNativeObjAddr(), matResult.getNativeObjAddr());
+        rgbaMat = inputFrame.rgba();
 
         mCamera.autoFocus(new Camera.AutoFocusCallback() {
             @Override
             public void onAutoFocus(boolean success, Camera camera) {
-                System.out.println("onAutoFocus success" + success);
-                if (success == true) {
-//                    onFocus.on(rgbaMat);
-                } else {
+//                System.out.println("onAutoFocus success" + success);
 
+                if (success == true) {
+
+
+                } else {
+                    return;
                 }
             }
         });
 
-        return matResult;
+        return rgbaMat;
     }
 
 
@@ -92,7 +121,7 @@ public class CameraView extends JavaCameraView implements JavaCameraView.CvCamer
     }
 
     interface OnFocus {
-        void on(Mat input);
+        void onInputMat(Mat[] resultMat, Mat resultState);
     }
 
     private OnFocus onFocus;
@@ -101,10 +130,25 @@ public class CameraView extends JavaCameraView implements JavaCameraView.CvCamer
         this.onFocus = onFocus;
     }
 
-
     @Override
     public void onCameraViewStopped() {
 
+    }
+
+    private void turnOffFlash() {
+        Camera.Parameters parameters = mCamera.getParameters();
+        parameters.setFlashMode(parameters.FLASH_MODE_OFF);
+
+        if (mCamera != null)
+            mCamera.setParameters(parameters);
+    }
+
+    private void turnOnFlash() {
+        Camera.Parameters parameters = mCamera.getParameters();
+        parameters.setFlashMode(parameters.FLASH_MODE_ON);
+
+        if (mCamera != null)
+            mCamera.setParameters(parameters);
     }
 
 }

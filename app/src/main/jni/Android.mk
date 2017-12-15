@@ -10,8 +10,7 @@ include ${OPENCVROOT}\sdk\native\jni\OpenCV.mk
 
 LOCAL_MODULE    := MyLib
 LOCAL_SRC_FILES := com_example_pdg_opencvexam_NativeClass.cpp
-LOCAL_LDLIBS += -llog
+LOCAL_LDLIBS := -llog
 LOCAL_DEFAULT_CPP_EXTENSION := cpp
-
 
 include $(BUILD_SHARED_LIBRARY)

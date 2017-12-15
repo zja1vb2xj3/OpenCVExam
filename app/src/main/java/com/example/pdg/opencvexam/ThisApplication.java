@@ -5,14 +5,18 @@ import android.graphics.Bitmap;
 
 import org.opencv.core.Mat;
 
+import java.text.BreakIterator;
+import java.util.ArrayList;
+
 /**
  * Created by pdg on 2017-12-07.
  */
 
 public class ThisApplication extends Application {
 
+    private static ArrayList<Bitmap> bitmapArrayList = new ArrayList<>();
+
     private static Bitmap bitmap;
-    private static Mat mat;
 
     public Bitmap getBitmap() {
         return bitmap;
@@ -22,11 +26,11 @@ public class ThisApplication extends Application {
         ThisApplication.bitmap = bitmap;
     }
 
-    public void setMat(Mat mat) {
-        ThisApplication.mat = mat;
+    public ArrayList<Bitmap> getBitmapArrayList() {
+        return bitmapArrayList;
     }
 
-    public Mat getMat() {
-        return mat;
+    public void setBitmapArrayList(ArrayList<Bitmap> bitmapArrayList) {
+        ThisApplication.bitmapArrayList = bitmapArrayList;
     }
 }

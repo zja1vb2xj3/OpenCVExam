@@ -1,25 +1,16 @@
 package com.example.pdg.opencvexam;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.os.Bundle;
-import android.support.v4.widget.ImageViewCompat;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
-import org.opencv.android.Utils;
-import org.opencv.core.CvType;
-import org.opencv.core.KeyPoint;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfKeyPoint;
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
-import org.opencv.features2d.FeatureDetector;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
@@ -43,11 +34,45 @@ public class OcrActivity extends Activity {
 
         ThisApplication thisApplication = (ThisApplication) getApplicationContext();
 
-        Bitmap bitmap = thisApplication.getBitmap();
+        ArrayList<Bitmap> bitmapArrayList = thisApplication.getBitmapArrayList();
 
-        imageView.setImageBitmap(bitmap);
+
+        TessCore tessCore = new TessCore(this);
+
+        for (Bitmap bitmap : bitmapArrayList) {
+            List<String> ocrResults = tessCore.detectText(bitmap);
+
+            for (String result : ocrResults) {
+                if (result.equalsIgnoreCase("")) {
+                    System.out.println("ocr result : null");
+                } else {
+                    System.out.println("ocr result : " + result);
+                }
+            }
+        }
+
+    }//end onCreate
+
+    private Bitmap rotateBitmap(Bitmap bitmap, int degree) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(degree);
+
+        Bitmap rotateBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+
+        return rotateBitmap;
     }
 
+    ImageView.OnTouchListener onTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+
+            if (motionEvent.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                Toast.makeText(OcrActivity.this, String.valueOf(motionEvent.getX() + "\n" + motionEvent.getY()), Toast.LENGTH_SHORT).show();
+            }
+
+            return false;
+        }
+    };
 
 
 }
